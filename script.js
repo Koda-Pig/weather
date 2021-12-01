@@ -8,12 +8,46 @@ const celsiusInput = document.querySelector("#celsius");
 const farenheitInput = document.querySelector("#farenheit");
 let tempC;
 let tempF;
+let userLocation;
+let url;
+
+// Geolocation
+window.addEventListener('load', (event) => {
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(getLonLat, showError);
+    } else {
+      console.log("The Browser Does not Support Geolocation");
+    }
+  }
+  function getLonLat(position) {
+    userLocation = {
+      "lon": position.coords.longitude,
+      "lat": position.coords.latitude
+    }
+    console.log(userLocation);
+  }
+  function showError(error) {
+    if(error.PERMISSION_DENIED){
+        console.log("The User have denied the request for Geolocation.");
+    }
+  }
+  getLocation();
+});
+
 
 let weatherBtn = document
   .querySelector("button")
   .addEventListener("click", function (e) {
     e.preventDefault();
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${inputValCity.value}&appid=131c028170b0cf867703265c71524ce8`;
+
+    if (!userLocation == null) {
+      url = `https://api.openweathermap.org/data/2.5/weather?lat=${userLocation.lat}&lon=${userLocation.long}&appid=131c028170b0cf867703265c71524ce8`;
+      console.log(url);
+    } else {
+      url = `https://api.openweathermap.org/data/2.5/weather?q=${inputValCity.value}&appid=131c028170b0cf867703265c71524ce8`;
+    }
+
     fetch(url)
       .then((res) => res.json())
 
